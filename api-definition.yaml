@@ -1,0 +1,203 @@
+openapi: "3.0.0"
+
+info:
+  version: "1.0.0"
+  title: Developers API v1
+
+servers:
+  - url: http://0.0.0.0:8085/api/v1
+
+paths:
+  /developers:
+    post:
+      summary: Birth a Developer
+      operationId: createDeveloper
+      tags:
+        - Developer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Developer"
+      responses:
+        '201':
+          description: Developer was successfully birthed
+          headers:
+            Location:
+              description: Path to the newly-created Developer
+              example: "/api/v1/developers/982f5c0b-33c9-4d17-ba3c-d06c45f28ee3"
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Developer"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    get:
+      summary: Look for Developers
+      operationId: searchDevelopers
+      tags:
+        - Developer
+      parameters:
+        - name: name
+          in: query
+          description: Only return results whose name matches the value exactly
+          schema:
+            type: string
+        - name: team
+          in: query
+          description: Only return results whose team matches the value exactly
+          schema:
+            type: string
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        '200':
+          description: Zero or more Developers found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Developers"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+  /developers/{developerId}:
+    parameters:
+      - name: developerId
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      summary: Get Developer
+      operationId: getDeveloper
+      tags:
+        - Developer
+      responses:
+        '200':
+          description: Developer found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Developer"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    patch:
+      summary: Update Developer
+      operationId: updateDeveloper
+      tags:
+        - Developer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Developer"
+      responses:
+        '200':
+          description: Developer was successfully modified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Developer"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+    delete:
+      summary: Delete Developer
+      operationId: deleteDeveloper
+      tags:
+        - Developer
+      responses:
+        '204':
+          description: Developer was successfully shot
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
+components:
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: The number of items to offset the results by
+      schema:
+        type: integer
+        default: 1
+    PageSize:
+      name: pageSize
+      in: query
+      description: The number of items to be returned in the response
+      schema:
+        type: integer
+        default: 10
+    Sort:
+      name: sort
+      in: query
+      description: |
+        Sort the results by the provided fields and direction, in format `<field name>:<direction>,...`
+        Where `<direction>` can be `asc` or `desc`
+      schema:
+        type: string
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        errorType:
+          type: string
+          enum:
+            - BadRequest
+            - NotFound
+            - InternalServerError
+          example: BadRequest
+          description: Human-readable error type, corresponds to HTTP status
+        message:
+          type: string
+          example: No name found
+          description: Human-readable description of the error
+    Developer:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "982f5c0b-33c9-4d17-ba3c-d06c45f28ee3"
+        name:
+          type: string
+          example: Dev Devington
+          minLength: 1
+        team:
+          type: string
+          example: The A Team
+        skils:
+          type: array
+          description: List of skills that the Developer has
+          items:
+            type: string
+            example: C#
+        createdAt:
+          type: string
+          format: date-time
+          description: The timestamp of when this resource was created
+          example: "2020-09-20T14:34:23+10:00"
+        updatedAt:
+          type: string
+          format: date-time
+          description: The timestamp of when this resource was last updated
+          example: "2020-09-20T16:00:00+10:00"
+    Developers:
+      type: object
+      properties:
+        hasNext:
+          type: boolean
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Developer"
+
+  responses:
+    ErrorResponse:
+      description: An error has occurred
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
