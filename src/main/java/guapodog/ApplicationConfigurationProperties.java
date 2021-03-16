@@ -6,20 +6,18 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 @ConfigurationProperties("application") 
 public class ApplicationConfigurationProperties implements ApplicationConfiguration {
 
-    protected final Integer DEFAULT_MAX = 10;
-
     @NonNull
-    private Integer max = DEFAULT_MAX;
+    private Integer pageSize;
 
     @Override
     @NonNull
-    public Integer getMax() {
-        return max;
+    public Integer getPageSize() {
+        return pageSize;
     }
 
-    public void setMax(@NonNull Integer max) {
-        if(max != null) {
-            this.max = max;
+    public void setPageSize(@NonNull Integer pageSize) {
+        if(pageSize != null) {
+            this.pageSize = pageSize;
         }
     }
 }

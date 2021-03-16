@@ -4,33 +4,37 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import org.hibernate.annotations.GenericGenerator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "developer")
-public class DeveloperEntity {
+public class Developer {
 
-    public DeveloperEntity() {}
+    public Developer() {}
 
-    public DeveloperEntity(@NotNull String name) {
+    public Developer(@NotNull String name) {
         this.name = name;
     }
 
     @Id
-    private String id;
+    @GeneratedValue
+    private UUID id;
 
     private String name;
 
     private String team;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "skill", joinColumns = @JoinColumn(name = "developer_id"))
     @Column(name = "skill")
     private List<String> skills = new ArrayList<String>();
@@ -39,11 +43,11 @@ public class DeveloperEntity {
 
     private String updatedAt;
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

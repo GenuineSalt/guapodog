@@ -1,28 +1,16 @@
 package guapodog.request;
 
 import java.util.List;
-import javax.validation.constraints.NotBlank;
 import io.micronaut.core.annotation.Introspected;
 
 @Introspected
 public class DeveloperUpdateRequest {
-    
-    @NotBlank
-    private String id;
 
     private String name;
 
     private String team;
     
     private List<String> skills;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

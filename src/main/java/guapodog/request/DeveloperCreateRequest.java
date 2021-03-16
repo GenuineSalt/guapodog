@@ -8,22 +8,11 @@ import io.micronaut.core.annotation.Introspected;
 public class DeveloperCreateRequest {
     
     @NotBlank
-    private String id;
-
-    @NotBlank
     private String name;
 
     private String team;
     
     private List<String> skills;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

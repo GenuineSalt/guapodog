@@ -1,19 +1,19 @@
 package guapodog;
 
-import guapodog.domain.Developer;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import guapodog.entity.Developer;
+import guapodog.request.DeveloperCreateRequest;
+import guapodog.request.DeveloperUpdateRequest;
 import java.util.List;
 
 public interface IDeveloperRepository {
 
-    Developer findById(@NotNull String id);
+    Developer findById(String id);
 
-    List<Developer> findAll(@NotNull SortingAndOrderArguments args);
+    List<Developer> findAll(QueryParameters args);
 
-    Developer save(@Valid Developer developer);
+    Developer save(DeveloperCreateRequest developer);
 
-    Developer update(@Valid Developer developer);
+    Developer update(String id, DeveloperUpdateRequest request);
 
-    void deleteById(@NotNull String id);
+    void deleteById(String id);
 }

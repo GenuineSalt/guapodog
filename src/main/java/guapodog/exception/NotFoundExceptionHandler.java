@@ -6,10 +6,8 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.server.exceptions.ExceptionHandler;
 import javax.inject.Singleton;
-
 import guapodog.error.ErrorResponse;
 import guapodog.error.ErrorType;
-import guapodog.exception.NotFoundException;
 
 @Produces
 @Singleton 

@@ -1,27 +1,22 @@
 package guapodog;
 
-import guapodog.domain.Developer;
-import guapodog.entity.DeveloperEntity;
+import guapodog.entity.Developer;
 import guapodog.exception.*;
+import guapodog.request.DeveloperCreateRequest;
+import guapodog.request.DeveloperUpdateRequest;
 
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import io.micronaut.transaction.annotation.ReadOnly;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import org.dozer.DozerBeanMapper;
-import org.dozer.MappingException;
-
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Singleton 
 public class DeveloperRepository implements IDeveloperRepository {
@@ -39,57 +34,71 @@ public class DeveloperRepository implements IDeveloperRepository {
     @Override
     @ReadOnly  
     public Developer findById(String id) throws NotFoundException {
-        DeveloperEntity developerEntity = entityManager.find(DeveloperEntity.class, id);
-
-        if (developerEntity == null)
-            throw new NotFoundException();
-
-        return mapper.map(developerEntity, Developer.class);
+        return Optional.ofNullable(entityManager.find(Developer.class, UUID.fromString(id))).orElseThrow(NotFoundException::new);
     }
 
-    private final static List<String> VALID_PROPERTY_NAMES = Arrays.asList("id", "name");
-
     @ReadOnly 
-    public List<Developer> findAll(SortingAndOrderArguments args) {
-        String qlString = "SELECT d FROM DeveloperEntity as d";
-        if (args.getOrder().isPresent() && args.getSort().isPresent() && VALID_PROPERTY_NAMES.contains(args.getSort().get())) {
-                qlString += " ORDER BY d." + args.getSort().get() + " " + args.getOrder().get().toLowerCase();
-        }
-        TypedQuery<DeveloperEntity> query = entityManager.createQuery(qlString, DeveloperEntity.class);
-        query.setMaxResults(args.getMax().orElseGet(applicationConfiguration::getMax));
-        args.getOffset().ifPresent(query::setFirstResult);
+    public List<Developer> findAll(QueryParameters args) {
+        String qlString = "SELECT d FROM Developer as d";
 
-        List<DeveloperEntity> developerEntities = query.getResultList();
-        List<Developer> developers = new ArrayList<Developer>();
+        if (args.getName().isPresent() && args.getTeam().isPresent()) 
+            qlString += " WHERE d.name = '" + args.getName().get() + "' AND d.team = '" + args.getTeam().get() + "'";
+        else if (args.getName().isPresent())
+            qlString += " WHERE d.name = '" + args.getName().get() + "'";
+        else if (args.getTeam().isPresent())
+            qlString += " WHERE d.team = '" + args.getTeam().get() + "'";
 
-        for (DeveloperEntity developerEntity : developerEntities) {
-            developers.add(mapper.map(developerEntity, Developer.class));
-        }
+        if (args.getSort().isPresent()) 
+            qlString += " ORDER BY d." + args.getSortField() + " " + args.getSortDirection().toLowerCase();
 
-        return developers;
+        TypedQuery<Developer> query = entityManager.createQuery(qlString, Developer.class);
+        query.setMaxResults(args.getPageSize().orElseGet(applicationConfiguration::getPageSize));
+        args.getPage().ifPresent(query::setFirstResult);
+
+        return query.getResultList();
     }
 
     @Override
     @Transactional  
-    public Developer save(Developer developer) {
-        DeveloperEntity developerEntity = mapper.map(developer, DeveloperEntity.class);
-        entityManager.persist(developerEntity);
+    public Developer save(DeveloperCreateRequest req) {
+        Developer developer = mapper.map(req, Developer.class);
+
+        Timestamp time = new Timestamp(System.currentTimeMillis());
+        developer.setCreatedAt(time.toString());
+        developer.setUpdatedAt(time.toString());
+
+        entityManager.persist(developer);
         return developer;
     }
 
     @Override
     @Transactional 
-    public Developer update(Developer developer) {
-        DeveloperEntity developerEntity = mapper.map(developer, DeveloperEntity.class);
-        entityManager.merge(developerEntity);
+    public Developer update(String id, DeveloperUpdateRequest req) {
+        Developer developer = Optional.ofNullable(entityManager.find(Developer.class, UUID.fromString(id))).orElseThrow(NotFoundException::new);
+        
+        Timestamp time = new Timestamp(System.currentTimeMillis());
+        if (req.getName() != null) {
+            developer.setName(req.getName());
+            developer.setUpdatedAt(time.toString());
+        }  
+        if (req.getTeam() != null) {
+            developer.setTeam(req.getTeam());
+            developer.setUpdatedAt(time.toString());
+        }
+        if (req.getSkills() != null) {
+            developer.setSkills(req.getSkills());
+            developer.setUpdatedAt(time.toString());
+        }
+
+        entityManager.merge(developer);
         return developer;
     }
 
     @Override
     @Transactional 
     public void deleteById(String id) {
-        DeveloperEntity entity = entityManager.find(DeveloperEntity.class, id);
-        if (entity != null)
-            entityManager.remove(entity);
+        Developer developer = entityManager.find(Developer.class, UUID.fromString(id));
+        if (developer != null)
+            entityManager.remove(developer);
     }
 }
