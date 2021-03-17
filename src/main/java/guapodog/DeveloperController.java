@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import guapodog.entity.*;
-import guapodog.exception.*;
 import guapodog.request.*;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;

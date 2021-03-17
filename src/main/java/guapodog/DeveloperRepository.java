@@ -4,7 +4,6 @@ import guapodog.entity.Developer;
 import guapodog.exception.*;
 import guapodog.request.DeveloperCreateRequest;
 import guapodog.request.DeveloperUpdateRequest;
-
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -12,8 +11,6 @@ import javax.transaction.Transactional;
 import io.micronaut.transaction.annotation.ReadOnly;
 import org.dozer.DozerBeanMapper;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
