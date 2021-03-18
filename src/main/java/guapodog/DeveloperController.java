@@ -31,11 +31,7 @@ public class DeveloperController {
         this.developerRepository = developerRepository;
     }
 
-<<<<<<< Updated upstream
-    @Get("/{?args*}")
-=======
     @Get("/")
->>>>>>> Stashed changes
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<Iterable<Developer>> getDevelopers(Pageable pageable) {
         return HttpResponse.ok(developerRepository.findAll(pageable));

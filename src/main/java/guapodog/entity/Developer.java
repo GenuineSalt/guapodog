@@ -13,11 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-<<<<<<< Updated upstream
-import java.util.ArrayList;
-import java.util.List;
-=======
->>>>>>> Stashed changes
 
 @Entity
 @Table(name = "developer")
@@ -30,12 +25,8 @@ public class Developer {
     }
 
     @Id
-<<<<<<< Updated upstream
-    private String id;
-=======
     @GeneratedValue
     private Long id;
->>>>>>> Stashed changes
 
     private String name;
 
@@ -50,19 +41,11 @@ public class Developer {
 
     private String updatedAt;
 
-<<<<<<< Updated upstream
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-=======
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
->>>>>>> Stashed changes
         this.id = id;
     }
 

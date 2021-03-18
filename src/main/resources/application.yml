@@ -2,17 +2,14 @@
 micronaut:
   application:
     name: guapodog
-<<<<<<< Updated upstream
   server:
-      port: 8085
-=======
+    port: 8085
   data:
     pageable:
       default-page-size: 10
       sort-ignore-case: true
       size-parameter-name: pageSize
       sort-delimiter: ":"
->>>>>>> Stashed changes
 
 # Persistence
 datasources:
@@ -25,14 +22,3 @@ datasources:
     dialect: H2
 jpa.default.properties.hibernate.hbm2ddl.auto: update
 jpa.default.properties.hibernate.show_sql: true
-
-<<<<<<< Updated upstream
-# App Configs
-application:
-  page: 1
-  pageSize: 50
-=======
-# # App Configs
-# application:
-#   pageSize: 50
->>>>>>> Stashed changes

@@ -1,104 +1,26 @@
 package guapodog;
 
 import java.sql.Timestamp;
-<<<<<<< Updated upstream
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-@Singleton 
-public class DeveloperRepository implements IDeveloperRepository {
-    private final EntityManager entityManager;  
-    private final ApplicationConfiguration applicationConfiguration;
-    private static DozerBeanMapper mapper;
-
-    public DeveloperRepository(EntityManager entityManager,
-                               ApplicationConfiguration applicationConfiguration) { 
-        this.entityManager = entityManager;
-        this.applicationConfiguration = applicationConfiguration;
-        mapper = new DozerBeanMapper();
-    }
-
-    @Override
-    @ReadOnly  
-    public Developer findById(String id) throws NotFoundException {
-        return Optional.ofNullable(entityManager.find(Developer.class, id)).orElseThrow(NotFoundException::new);
-    }
-=======
->>>>>>> Stashed changes
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
 
-<<<<<<< Updated upstream
-        if (args.getName().isPresent() && args.getTeam().isPresent()) 
-            qlString += " WHERE d.name = :name AND d.team = :team";
-        else if (args.getName().isPresent())
-            qlString += " WHERE d.name = :name";
-        else if (args.getTeam().isPresent())
-            qlString += " WHERE d.team = :team";
-=======
 import guapodog.entity.Developer;
 import guapodog.exception.NotFoundException;
 import io.micronaut.data.model.Pageable;
->>>>>>> Stashed changes
 
 @Singleton 
 public class DeveloperRepository {
 
-<<<<<<< Updated upstream
-        TypedQuery<Developer> query = entityManager.createQuery(qlString, Developer.class);
-
-        int page = args.getPage().orElseGet(applicationConfiguration::getPage);
-        int pageSize = args.getPageSize().orElseGet(applicationConfiguration::getPageSize);
-        int offset = (page - 1) * pageSize;
-
-        args.getName().ifPresent(name -> query.setParameter("name", name));
-        args.getTeam().ifPresent(team -> query.setParameter("team", team));
-        query.setMaxResults(pageSize);
-        query.setFirstResult(offset);
-=======
     @Inject
     IDeveloperRepository developerRepository;
->>>>>>> Stashed changes
 
     public Developer findById(Long id) throws NotFoundException {
         //removed Optional, CrudRepo findbyId already is Optional
         return developerRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
-<<<<<<< Updated upstream
-    @Override
-    @Transactional  
-    public Developer save(DeveloperCreateRequest req) {
-        Developer developer = mapper.map(req, Developer.class);
-
-        if (developer.getId() != null) {
-            if (entityManager.find(Developer.class, developer.getId()) != null)
-                throw new BadRequestException("A developer with id: '" + developer.getId() + "' already exists");
-        }
-        else {
-            String id;
-            do {
-                id = UUID.randomUUID().toString();
-            } while (entityManager.find(Developer.class, id) != null);
-            developer.setId(id);
-        }
-
-        Timestamp time = new Timestamp(System.currentTimeMillis());
-        developer.setCreatedAt(time.toString());
-        developer.setUpdatedAt(time.toString());
-
-        entityManager.persist(developer);
-        return developer;
-    }
-
-    @Override
-    @Transactional 
-    public Developer update(String id, DeveloperUpdateRequest req) {
-        Developer developer = Optional.ofNullable(entityManager.find(Developer.class, id)).orElseThrow(NotFoundException::new);
-=======
     public Iterable<Developer> findAll(Pageable pageable) {
         //using pageable from PageableRepo + configs
         return developerRepository.findAll(pageable);
@@ -106,7 +28,6 @@ public class DeveloperRepository {
 
     @Transactional
     public Developer updateDeveloper(Developer req, Long id) {
->>>>>>> Stashed changes
         
         //removed Optional, CrudRepo findbyId already is Optional
         Developer developer = developerRepository.findById(id).orElseThrow(NotFoundException::new);
@@ -128,14 +49,6 @@ public class DeveloperRepository {
         return developerRepository.update(developer);
     }
 
-<<<<<<< Updated upstream
-    @Override
-    @Transactional 
-    public void deleteById(String id) {
-        Developer developer = entityManager.find(Developer.class, id);
-        if (developer != null)
-            entityManager.remove(developer);
-=======
     public Developer saveDeveloper(Developer developer) {
         
         Timestamp time = new Timestamp(System.currentTimeMillis());
@@ -148,7 +61,6 @@ public class DeveloperRepository {
             
     public void deleteDeveloperById(Long id) {
         developerRepository.deleteById(id);
->>>>>>> Stashed changes
     }
 
     // @Override
