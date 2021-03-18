@@ -1,53 +1,69 @@
 package guapodog;
 
 import java.net.URI;
-import java.util.List;
+
+import javax.inject.Inject;
 import javax.validation.Valid;
-import guapodog.entity.*;
-import guapodog.request.*;
+
+import guapodog.entity.Developer;
+import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Patch;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 
 @ExecuteOn(TaskExecutors.IO)
 @Controller("/developers")
 public class DeveloperController {
-    protected final DeveloperRepository developerRepository;
+
+    @Inject
+    DeveloperRepository developerRepository;
 
     public DeveloperController(DeveloperRepository developerRepository) { 
         this.developerRepository = developerRepository;
     }
 
+<<<<<<< Updated upstream
     @Get("/{?args*}")
+=======
+    @Get("/")
+>>>>>>> Stashed changes
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<List<Developer>> GetDevelopers(@Valid QueryParameters args) {
-        return HttpResponse.ok(developerRepository.findAll(args));
+    public HttpResponse<Iterable<Developer>> getDevelopers(Pageable pageable) {
+        return HttpResponse.ok(developerRepository.findAll(pageable));
     }
 
     @Get("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<Developer> GetDeveloper(String id) {
+    public MutableHttpResponse<Developer> getDeveloper(Long id) {
         return HttpResponse.ok(developerRepository.findById(id));
     }
 
     @Post
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<Developer> CreateDeveloper(@Body @Valid DeveloperCreateRequest req) {
-        Developer developer = developerRepository.save(req);
+    public HttpResponse<Developer> createDeveloper(@Body @Valid Developer req) {
+        Developer developer = developerRepository.saveDeveloper(req);
         return HttpResponse.created(developer).headers(headers -> headers.location(location(developer)));
     }
 
     @Patch("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<Developer> UpdateDeveloper(String id, @Body @Valid DeveloperUpdateRequest req) { 
-        return HttpResponse.ok(developerRepository.update(id, req));  
+    public HttpResponse<Developer> updateDeveloper(Long id, @Body @Valid Developer req) { 
+        Developer developer = developerRepository.updateDeveloper(req, id);
+        return HttpResponse.ok(developer).headers(headers -> headers.location(location(developer)));
     }
 
     @Delete("/{id}") 
-    public HttpResponse delete(String id) {
-        developerRepository.deleteById(id);
+    public HttpResponse delete(Long id) {
+        developerRepository.deleteDeveloperById(id);
         return HttpResponse.noContent();
     }
 
