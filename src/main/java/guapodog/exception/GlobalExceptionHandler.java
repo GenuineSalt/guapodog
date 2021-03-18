@@ -20,7 +20,7 @@ public class GlobalExceptionHandler implements ExceptionHandler<Exception, HttpR
         System.err.println(exception.getMessage()); // Log the exception
 
         ErrorResponse response;
-        if (exception instanceof ConstraintViolationException) {
+        if (exception instanceof BadRequestException || exception instanceof ConstraintViolationException) {
             response = new ErrorResponse(ErrorType.BadRequest, exception.getMessage());
             return HttpResponse.badRequest(response);
         }

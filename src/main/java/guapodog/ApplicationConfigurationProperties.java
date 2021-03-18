@@ -7,7 +7,22 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 public class ApplicationConfigurationProperties implements ApplicationConfiguration {
 
     @NonNull
+    private Integer page;
+
+    @NonNull
     private Integer pageSize;
+
+    @Override
+    @NonNull
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(@NonNull Integer page) {
+        if(page != null) {
+            this.page = page;
+        }
+    }
 
     @Override
     @NonNull

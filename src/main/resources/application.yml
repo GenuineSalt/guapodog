@@ -2,6 +2,8 @@
 micronaut:
   application:
     name: guapodog
+  server:
+      port: 8085
 
 # Persistence
 datasources:
@@ -17,4 +19,5 @@ jpa.default.properties.hibernate.show_sql: true
 
 # App Configs
 application:
+  page: 1
   pageSize: 50

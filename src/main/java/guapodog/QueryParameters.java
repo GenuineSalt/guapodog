@@ -11,11 +11,11 @@ import java.util.Optional;
 public class QueryParameters {
 
     @Nullable
-    @PositiveOrZero 
+    @Positive 
     private Integer page;
 
     @Nullable
-    @Positive 
+    @PositiveOrZero 
     private Integer pageSize;
 
     @Nullable

@@ -6,15 +6,12 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import org.hibernate.annotations.GenericGenerator;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "developer")
@@ -27,8 +24,7 @@ public class Developer {
     }
 
     @Id
-    @GeneratedValue
-    private UUID id;
+    private String id;
 
     private String name;
 
@@ -43,11 +39,11 @@ public class Developer {
 
     private String updatedAt;
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -20,7 +20,7 @@ public class DeveloperController {
         this.developerRepository = developerRepository;
     }
 
-    @Get("/list{?args*}")
+    @Get("/{?args*}")
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<List<Developer>> GetDevelopers(@Valid QueryParameters args) {
         return HttpResponse.ok(developerRepository.findAll(args));

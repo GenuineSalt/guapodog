@@ -31,7 +31,7 @@ public class DeveloperRepository implements IDeveloperRepository {
     @Override
     @ReadOnly  
     public Developer findById(String id) throws NotFoundException {
-        return Optional.ofNullable(entityManager.find(Developer.class, UUID.fromString(id))).orElseThrow(NotFoundException::new);
+        return Optional.ofNullable(entityManager.find(Developer.class, id)).orElseThrow(NotFoundException::new);
     }
 
     @ReadOnly 
@@ -39,18 +39,25 @@ public class DeveloperRepository implements IDeveloperRepository {
         String qlString = "SELECT d FROM Developer as d";
 
         if (args.getName().isPresent() && args.getTeam().isPresent()) 
-            qlString += " WHERE d.name = '" + args.getName().get() + "' AND d.team = '" + args.getTeam().get() + "'";
+            qlString += " WHERE d.name = :name AND d.team = :team";
         else if (args.getName().isPresent())
-            qlString += " WHERE d.name = '" + args.getName().get() + "'";
+            qlString += " WHERE d.name = :name";
         else if (args.getTeam().isPresent())
-            qlString += " WHERE d.team = '" + args.getTeam().get() + "'";
+            qlString += " WHERE d.team = :team";
 
         if (args.getSort().isPresent()) 
             qlString += " ORDER BY d." + args.getSortField() + " " + args.getSortDirection().toLowerCase();
 
         TypedQuery<Developer> query = entityManager.createQuery(qlString, Developer.class);
-        query.setMaxResults(args.getPageSize().orElseGet(applicationConfiguration::getPageSize));
-        args.getPage().ifPresent(query::setFirstResult);
+
+        int page = args.getPage().orElseGet(applicationConfiguration::getPage);
+        int pageSize = args.getPageSize().orElseGet(applicationConfiguration::getPageSize);
+        int offset = (page - 1) * pageSize;
+
+        args.getName().ifPresent(name -> query.setParameter("name", name));
+        args.getTeam().ifPresent(team -> query.setParameter("team", team));
+        query.setMaxResults(pageSize);
+        query.setFirstResult(offset);
 
         return query.getResultList();
     }
@@ -59,6 +66,18 @@ public class DeveloperRepository implements IDeveloperRepository {
     @Transactional  
     public Developer save(DeveloperCreateRequest req) {
         Developer developer = mapper.map(req, Developer.class);
+
+        if (developer.getId() != null) {
+            if (entityManager.find(Developer.class, developer.getId()) != null)
+                throw new BadRequestException("A developer with id: '" + developer.getId() + "' already exists");
+        }
+        else {
+            String id;
+            do {
+                id = UUID.randomUUID().toString();
+            } while (entityManager.find(Developer.class, id) != null);
+            developer.setId(id);
+        }
 
         Timestamp time = new Timestamp(System.currentTimeMillis());
         developer.setCreatedAt(time.toString());
@@ -71,7 +90,7 @@ public class DeveloperRepository implements IDeveloperRepository {
     @Override
     @Transactional 
     public Developer update(String id, DeveloperUpdateRequest req) {
-        Developer developer = Optional.ofNullable(entityManager.find(Developer.class, UUID.fromString(id))).orElseThrow(NotFoundException::new);
+        Developer developer = Optional.ofNullable(entityManager.find(Developer.class, id)).orElseThrow(NotFoundException::new);
         
         Timestamp time = new Timestamp(System.currentTimeMillis());
         if (req.getName() != null) {
@@ -94,7 +113,7 @@ public class DeveloperRepository implements IDeveloperRepository {
     @Override
     @Transactional 
     public void deleteById(String id) {
-        Developer developer = entityManager.find(Developer.class, UUID.fromString(id));
+        Developer developer = entityManager.find(Developer.class, id);
         if (developer != null)
             entityManager.remove(developer);
     }
