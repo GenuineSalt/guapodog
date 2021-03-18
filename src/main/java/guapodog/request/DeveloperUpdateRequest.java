@@ -1,6 +1,7 @@
 package guapodog.request;
 
 import java.util.List;
+
 import io.micronaut.core.annotation.Introspected;
 
 @Introspected
