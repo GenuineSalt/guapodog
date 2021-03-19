@@ -1,11 +1,10 @@
 package guapodog;
 
 import java.net.URI;
-
 import javax.inject.Inject;
 import javax.validation.Valid;
-
 import guapodog.entity.Developer;
+import guapodog.exception.BadRequestException;
 import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -39,30 +38,31 @@ public class DeveloperController {
 
     @Get("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public MutableHttpResponse<Developer> getDeveloper(Long id) {
+    public MutableHttpResponse<Developer> getDeveloper(String id) {
         return HttpResponse.ok(developerRepository.findById(id));
     }
 
     @Post
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<Developer> createDeveloper(@Body @Valid Developer req) {
+        if (req.getName() == null || req.getName().isEmpty())
+            throw new BadRequestException("Name must not be empty");
         Developer developer = developerRepository.saveDeveloper(req);
         return HttpResponse.created(developer).headers(headers -> headers.location(location(developer)));
     }
 
     @Patch("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<Developer> updateDeveloper(Long id, @Body @Valid Developer req) { 
+    public HttpResponse<Developer> updateDeveloper(String id, @Body @Valid Developer req) { 
         Developer developer = developerRepository.updateDeveloper(req, id);
         return HttpResponse.ok(developer).headers(headers -> headers.location(location(developer)));
     }
 
     @Delete("/{id}") 
-    public HttpResponse delete(Long id) {
+    public HttpResponse delete(String id) {
         developerRepository.deleteDeveloperById(id);
         return HttpResponse.noContent();
     }
-
 
     // Helpers
 

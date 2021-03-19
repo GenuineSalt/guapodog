@@ -11,8 +11,6 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;
 import guapodog.entity.Developer;
-import guapodog.request.DeveloperCreateRequest;
-import guapodog.request.DeveloperUpdateRequest;
 import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.List;
@@ -71,7 +69,7 @@ public class DeveloperControllerTest {
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
 
-        DeveloperUpdateRequest update = new DeveloperUpdateRequest() {{ setTeam("Pepega Clap"); }};
+        Developer update = new Developer() {{ setTeam("Pepega Clap"); }};
 
         request = HttpRequest.PATCH("/developers/" + bradId, update);
         response = client.toBlocking().exchange(request);
@@ -121,10 +119,6 @@ public class DeveloperControllerTest {
         request = HttpRequest.GET("/developers");
         List<Developer> developers = client.toBlocking().retrieve(request, Argument.of(List.class, Developer.class));
 
-        for (Developer d : developers) {
-            System.out.println(d.getName());
-        }
-
         assertEquals(3, developers.size());
 
         request = HttpRequest.GET("/developers?team=Potato");
@@ -156,24 +150,24 @@ public class DeveloperControllerTest {
         return null;
     }
 
-    protected DeveloperCreateRequest getBob() {
-        return new DeveloperCreateRequest() {{
+    protected Developer getBob() {
+        return new Developer() {{
             setName("Bob");
             setTeam("Banana");
             setSkills(Arrays.asList("spending money", "growing beans", "wii golf"));
         }};
     }
 
-    protected DeveloperCreateRequest getBrad() {
-        return new DeveloperCreateRequest() {{
+    protected Developer getBrad() {
+        return new Developer() {{
             setName("Brad");
             setTeam("Potato");
             setSkills(Arrays.asList("vaping", "flexing"));
         }};
     }
 
-    protected DeveloperCreateRequest getBen() {
-        return new DeveloperCreateRequest() {{
+    protected Developer getBen() {
+        return new Developer() {{
             setName("Ben");
             setTeam("Potato");
             setSkills(Arrays.asList("art of persuasion", "watching tv", "walking", "using chopsticks"));

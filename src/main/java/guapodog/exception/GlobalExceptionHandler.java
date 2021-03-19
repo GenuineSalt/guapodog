@@ -17,10 +17,14 @@ public class GlobalExceptionHandler implements ExceptionHandler<Exception, HttpR
 
     @Override
     public HttpResponse<ErrorResponse> handle(HttpRequest request, Exception exception) {
-        System.err.println(exception.getMessage()); // Log the exception
+
+        System.err.println(exception.getClass() + ": " + exception.getMessage()); // Log the exception
 
         ErrorResponse response;
-        if (exception instanceof BadRequestException || exception instanceof ConstraintViolationException) {
+        if (exception instanceof BadRequestException || 
+            exception instanceof ConstraintViolationException ||
+            exception instanceof IllegalArgumentException) {
+                
             response = new ErrorResponse(ErrorType.BadRequest, exception.getMessage());
             return HttpResponse.badRequest(response);
         }

@@ -2,7 +2,6 @@ package guapodog.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -13,6 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "developer")
@@ -24,9 +26,10 @@ public class Developer {
         this.name = name;
     }
 
-    @Id
-    @GeneratedValue
-    private Long id;
+    @Id 
+    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    private String id;
 
     private String name;
 
@@ -34,6 +37,8 @@ public class Developer {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "skill", joinColumns = @JoinColumn(name = "developer_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "developer_id")
     @Column(name = "skill")
     private List<String> skills = new ArrayList<String>();
 
@@ -41,11 +46,11 @@ public class Developer {
 
     private String updatedAt;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
