@@ -18,27 +18,14 @@ public class DeveloperRepository {
         return developerRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
-    public Iterable<Developer> findAll(Pageable pageable) {
-        return developerRepository.findAll(pageable).getContent();
+    public Iterable<Developer> findAll(Pageable pageable, String name, String team) {
+        return findDevelopers(name, team, pageable);
     }
 
     @Transactional
     public Developer updateDeveloper(Developer req, String id) {
         Developer developer = developerRepository.findById(id).orElseThrow(NotFoundException::new);
-
-        Timestamp time = new Timestamp(System.currentTimeMillis());
-        if (req.getName() != null) {
-            developer.setName(req.getName());
-            developer.setUpdatedAt(time.toString());
-        }  
-        if (req.getTeam() != null) {
-            developer.setTeam(req.getTeam());
-            developer.setUpdatedAt(time.toString());
-        }
-        if (req.getSkills().isEmpty()) {
-            developer.setSkills(req.getSkills());
-            developer.setUpdatedAt(time.toString());
-        }
+        update(req, developer);
 
         return developerRepository.update(developer);
     }
@@ -53,5 +40,39 @@ public class DeveloperRepository {
             
     public void deleteDeveloperById(String id) {
         developerRepository.deleteById(id);
+    }
+
+    private void update(Developer req, Developer dev) {
+        
+        Timestamp time = new Timestamp(System.currentTimeMillis());
+        
+        if (req.getName() != null) {
+            dev.setName(req.getName());
+        }  
+        if (req.getTeam() != null) {
+            dev.setTeam(req.getTeam());
+        }
+        if (req.getSkills().isEmpty()) {
+            dev.setSkills(req.getSkills());
+        }
+
+        dev.setUpdatedAt(time.toString());
+    }
+
+    private Iterable<Developer> findDevelopers(String name, String team, Pageable pageable) {
+
+        Iterable<Developer> results = null;
+
+        if (name != null && team != null){
+            results = developerRepository.findByNameAndTeam(name, team, pageable);
+        } else if (team != null) {
+            results = developerRepository.findByTeam(team, pageable);
+        } else if (name != null) {
+            results = developerRepository.findByName(name, pageable);
+        } else {
+            results = developerRepository.findAll(pageable);
+        }       
+
+        return results;
     }
 }

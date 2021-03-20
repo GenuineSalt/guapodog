@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import guapodog.entity.Developer;
 import guapodog.exception.BadRequestException;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -16,6 +17,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Patch;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 
@@ -32,8 +34,10 @@ public class DeveloperController {
 
     @Get("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<Iterable<Developer>> getDevelopers(Pageable pageable) {
-        return HttpResponse.ok(developerRepository.findAll(pageable));
+    public HttpResponse<Iterable<Developer>> getDevelopers(Pageable pageable, 
+        @Nullable @QueryValue String name, 
+        @Nullable @QueryValue String team) {
+        return HttpResponse.ok(developerRepository.findAll(pageable, name, team));
     }
 
     @Get("/{id}")
