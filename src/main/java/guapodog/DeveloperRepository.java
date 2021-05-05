@@ -26,15 +26,10 @@ public class DeveloperRepository {
     public Developer updateDeveloper(Developer req, String id) {
         Developer developer = developerRepository.findById(id).orElseThrow(NotFoundException::new);
         update(req, developer);
-
         return developerRepository.update(developer);
     }
 
     public Developer saveDeveloper(Developer developer) {
-        Timestamp time = new Timestamp(System.currentTimeMillis());
-        developer.setCreatedAt(time.toString());
-        developer.setUpdatedAt(time.toString());
-
         return developerRepository.save(developer);
     }
             
@@ -43,20 +38,15 @@ public class DeveloperRepository {
     }
 
     private void update(Developer req, Developer dev) {
-        
-        Timestamp time = new Timestamp(System.currentTimeMillis());
-        
         if (req.getName() != null) {
             dev.setName(req.getName());
         }  
         if (req.getTeam() != null) {
             dev.setTeam(req.getTeam());
         }
-        if (req.getSkills().isEmpty()) {
+        if (!req.getSkills().isEmpty()) {
             dev.setSkills(req.getSkills());
         }
-
-        dev.setUpdatedAt(time.toString());
     }
 
     private Iterable<Developer> findDevelopers(String name, String team, Pageable pageable) {
@@ -70,7 +60,7 @@ public class DeveloperRepository {
         } else if (name != null) {
             results = developerRepository.findByName(name, pageable);
         } else {
-            results = developerRepository.findAll(pageable);
+            results = developerRepository.findAll(pageable).getContent();
         }       
 
         return results;

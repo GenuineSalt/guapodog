@@ -15,6 +15,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import io.micronaut.data.annotation.DateCreated;
+import io.micronaut.data.annotation.DateUpdated;
 
 @Entity
 @Table(name = "developer")
@@ -42,8 +44,10 @@ public class Developer {
     @Column(name = "skill")
     private List<String> skills = new ArrayList<String>();
 
+    @DateCreated
     private String createdAt;
 
+    @DateUpdated
     private String updatedAt;
 
     public String getId() {
