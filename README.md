@@ -23,7 +23,7 @@ To execute the unit tests simply run `mvn test` in the project directory.
 ## Micronaut Reference Documentation
 
 - [User Guide](https://docs.micronaut.io/2.4.0/guide/index.html)
+- [Micronaut Data](https://micronaut-projects.github.io/micronaut-data/latest/guide/)
 - [API Reference](https://docs.micronaut.io/2.4.0/api/index.html)
 - [Configuration Reference](https://docs.micronaut.io/2.4.0/guide/configurationreference.html)
 - [Micronaut Guides](https://guides.micronaut.io/index.html)
-- [Micronaut HTTP Client documentation](https://docs.micronaut.io/latest/guide/index.html#httpClient)
